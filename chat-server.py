@@ -1,7 +1,7 @@
 # chat-server.py
 #
 # Courtesy of http://www.bogotobogo.com/python/python_network_programming_tcp_server_client_chat_server_chat_client_select.php
-# Modified by Exequiel Ceasar Navarrete <esnavarrete@up.edu.ph>
+# Modified by Exequiel Ceasar Navarrete <esnavarrete1@up.edu.ph>
 
 import sys
 import socket
@@ -9,7 +9,7 @@ import select
 
 HOST = ''
 SOCKET_LIST = []
-RECV_BUFFER = 4096 
+RECV_BUFFER = 4096
 PORT = 9009
 
 def chat_server():
@@ -32,7 +32,7 @@ def chat_server():
 
         for sock in ready_to_read:
             # a new connection request recieved
-            if sock == server_socket: 
+            if sock == server_socket:
                 sockfd, addr = server_socket.accept()
                 SOCKET_LIST.append(sockfd)
                 print "Client (%s, %s) connected" % addr
@@ -41,7 +41,7 @@ def chat_server():
 
             # a message from a client, not a new connection
             else:
-                # process data recieved from client, 
+                # process data recieved from client,
                 try:
                     # receiving data from the socket.
                     data = sock.recv(RECV_BUFFER)
@@ -49,14 +49,14 @@ def chat_server():
                         # there is something in the socket
                         broadcast(server_socket, sock, "\r" + '[' + str(sock.getpeername()) + '] ' + data)
                     else:
-                        # remove the socket that's broken    
+                        # remove the socket that's broken
                         if sock in SOCKET_LIST:
                             SOCKET_LIST.remove(sock)
 
                         # at this stage, no data means probably the connection has been broken
-                        broadcast(server_socket, sock, "Client (%s, %s) is offline\n" % addr) 
+                        broadcast(server_socket, sock, "Client (%s, %s) is offline\n" % addr)
 
-                # exception 
+                # exception
                 except:
                     broadcast(server_socket, sock, "Client (%s, %s) is offline\n" % addr)
                     continue
@@ -76,7 +76,7 @@ def broadcast (server_socket, sock, message):
                 # broken socket, remove it
                 if socket in SOCKET_LIST:
                     SOCKET_LIST.remove(socket)
- 
+
 if __name__ == "__main__":
     sys.exit(chat_server())
 

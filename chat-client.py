@@ -1,13 +1,13 @@
 # chat-client.py
 #
 # Courtesy of http://www.bogotobogo.com/python/python_network_programming_tcp_server_client_chat_server_chat_client_select.php
-# Modified by Exequiel Ceasar Navarrete <esnavarrete@up.edu.ph>
+# Modified by Exequiel Ceasar Navarrete <esnavarrete1@up.edu.ph>
 
 import sys
 import socket
 import select
 import re
- 
+
 def chat_client():
     if(len(sys.argv) < 3) :
         print 'Usage : python chat_client.py hostname port [chat_alias]'
@@ -27,24 +27,24 @@ def chat_client():
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.settimeout(2)
-     
+
     # connect to remote host
     try :
         s.connect((host, port))
     except :
         print 'Unable to connect'
         sys.exit()
-     
+
     print 'Connected to remote host. You can start sending messages'
     sys.stdout.write('[' + chat_alias + '] ')
     sys.stdout.flush()
 
     while 1:
         socket_list = [sys.stdin, s]
-         
+
         # Get the list sockets which are readable
         ready_to_read,ready_to_write,in_error = select.select(socket_list , [], [])
-         
+
         for sock in ready_to_read:
             if sock == s:
                 # incoming message from remote server, s
