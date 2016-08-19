@@ -31,19 +31,20 @@ class ServerGUI:
 
     # Add Start server button
     self.create_server_btn = pygui.Button(self.DIALOG, text="Start Server", command=self.invokeServer)
-    self.create_server_btn.grid(row=1)
+    self.create_server_btn.grid(row=0, column=2)
 
     # Stop Server
     self.stop_server_btn = pygui.Button(self.DIALOG, text="Stop Server", command=self.stopServer)
-    self.stop_server_btn.grid(row="2")
+    self.stop_server_btn.grid(row=2, column=2)
 
     # Quit Button
     self.quit_btn = pygui.Button(self.DIALOG, text="Quit", command=self.destroyGUI)
-    self.quit_btn.grid(row=3)
+    self.quit_btn.grid(row=3, column=2)
 
     # Create a text area for showing logs.
-    self.activity_log_area = pygui.Text(self.DIALOG, height=10, width=90)
-    self.activity_log_area.grid(row=4)
+    pygui.Label(self.DIALOG, text="Logs").grid(row=4)
+    self.activity_log_area = pygui.Text(self.DIALOG, height=10, width=50)
+    self.activity_log_area.grid(row=4, column=1)
 
     # Start the GUI
     self.DIALOG.mainloop()
