@@ -76,10 +76,13 @@ class ChatServer:
                 # remove the temporary socket
                 sock_local_copy.pop('tmp')
 
-                if callback != None:
-                  callback(chat_alias + " has connected to the server.")
+                # get the peername
+                peername = sock_local_copy[chat_alias].getpeername()
 
-                self.broadcast(self.server_socket, sock, "\r" + chat_alias + ' has connected in the chat room' + "\n")
+                if callback != None:
+                  callback(chat_alias + " on IP address " + peername[0] + " has connected to the server.")
+
+                self.broadcast(self.server_socket, sock, "\r[Server] " + chat_alias + ' on IP address ' + peername[0] + ' has connected in the chat room' + "\n")
               else:
                 for name, socket in sock_local_copy.iteritems():
                   # broadcast the message
@@ -106,9 +109,9 @@ class ChatServer:
                 deep_sock_local_copy.pop(item)
 
                 if callback != None:
-                  callback(item + " has disconnected from the server.")
+                  callback(item + " on IP address " + peername[0] + " has disconnected from the server.")
 
-                self.broadcast(self.server_socket, socket_to_remove, "\r%s has gone offline\n" % item)
+                self.broadcast(self.server_socket, socket_to_remove, "\r[Server] " + item + " on IP address " + peername[0] + " has left the chat room.\n")
 
               sock_local_copy = deep_sock_local_copy
 
