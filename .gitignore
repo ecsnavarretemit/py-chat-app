@@ -3,6 +3,7 @@ nbproject
 .vscode
 *.sublime-project
 *.sublime-workspace
+.editorconfig
 
 # Documentation Files #
 UPGRADE.md
