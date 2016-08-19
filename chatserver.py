@@ -9,6 +9,9 @@ import select
 import threading
 import re
 
+# TODO: callbacks should be implemented as event listener
+# TODO: handle situation wherein possible duplicate of dictionary keys
+# TODO: add scrollbar to the logs
 class ChatServer:
   PORT = 9000
   HOST = ''
@@ -39,7 +42,6 @@ class ChatServer:
     # invoke the run method
     threading.Thread(target=self.run, args=(self.stop_thread_evt, callback,)).start()
 
-  # TODO: callback should be implemented as event listener
   def run(self, stop_event, callback=None):
     sock_local_copy = self.SOCKET_DICT.copy()
 
