@@ -37,6 +37,7 @@ class ChatServer:
     # invoke the run method
     threading.Thread(target=self.run, args=(callback,)).start()
 
+  # TODO: callback should be implemented as event listener
   def run(self, callback=None):
     sock_local_copy = self.SOCKET_DICT.copy()
 
@@ -88,13 +89,14 @@ class ChatServer:
               for_removal = []
 
               # to prevent a runtime exception we store the name of the sockets in a list
-              # the iterate it later for removal. since looping the dictionary and removing items at the same time
+              # then iterate it later for removal. since looping the dictionary and removing items at the same time
               # throws a RuntimeError
               for name, socket in deep_sock_local_copy.iteritems():
                 # remove the socket that's broken
                 if socket == sock:
                   for_removal.append(name)
 
+              # remove items that are subject for removal
               for item in for_removal:
                 socket_to_remove = deep_sock_local_copy.get(item)
                 peername = socket_to_remove.getpeername()
