@@ -35,9 +35,9 @@ class ChatServer:
       callback("Starting Server on port: " + str(self.PORT))
 
     # invoke the run method
-    threading.Thread(target=self.run).start()
+    threading.Thread(target=self.run, args=(callback,)).start()
 
-  def run(self):
+  def run(self, callback=None):
     sock_local_copy = self.SOCKET_DICT.copy()
 
     while True:
@@ -73,7 +73,8 @@ class ChatServer:
                 # remove the temporary socket
                 sock_local_copy.pop('tmp')
 
-                print chat_alias + " has connected to the server."
+                if callback != None:
+                  callback(chat_alias + " has connected to the server.")
 
                 self.broadcast(self.server_socket, sock, "\r" + chat_alias + ' has connected in the chat room' + "\n")
               else:
@@ -100,14 +101,18 @@ class ChatServer:
 
                 deep_sock_local_copy.pop(item)
 
-                print item + " has disconnected from the server."
+                if callback != None:
+                  callback(item + " has disconnected from the server.")
+
                 self.broadcast(self.server_socket, socket_to_remove, "\r%s has gone offline\n" % item)
 
               sock_local_copy = deep_sock_local_copy
 
           # exception
           except:
-            print name + " has disconnected from the server."
+            if callback != None:
+              callback(name + " has disconnected from the server.")
+
             self.broadcast(self.server_socket, sock, "\r%s has gone offline\n" % name)
             continue
 
