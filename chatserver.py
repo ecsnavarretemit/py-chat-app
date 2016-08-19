@@ -34,14 +34,16 @@ class ChatServer:
       # invoke a callback supplied
       callback("Starting Server on port: " + str(self.PORT))
 
+    self.stop_thread_evt = threading.Event()
+
     # invoke the run method
-    threading.Thread(target=self.run, args=(callback,)).start()
+    threading.Thread(target=self.run, args=(self.stop_thread_evt, callback,)).start()
 
   # TODO: callback should be implemented as event listener
-  def run(self, callback=None):
+  def run(self, stop_event, callback=None):
     sock_local_copy = self.SOCKET_DICT.copy()
 
-    while True:
+    while(not stop_event.is_set()):
       # get the list sockets which are ready to be read through select
       # 4th arg, time_out  = 0 : poll and never block
       ready_to_read, ready_to_write, in_error = select.select(sock_local_copy.values(), [], [], 0)
@@ -138,6 +140,9 @@ class ChatServer:
     # prevent from throwing errors by checking if the server_socket attribute exists.
     if hasattr(self, 'server_socket'):
       self.server_socket.close()
+
+      # stop the thread
+      self.stop_thread_evt.set()
 
       if callback != None:
         # invoke a callback supplied

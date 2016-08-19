@@ -38,7 +38,7 @@ class ServerGUI:
     self.stop_server_btn.grid(row="2")
 
     # Quit Button
-    self.quit_btn = pygui.Button(self.DIALOG, text="Quit", command=self.DIALOG.destroy)
+    self.quit_btn = pygui.Button(self.DIALOG, text="Quit", command=self.destroyGUI)
     self.quit_btn.grid(row=3)
 
     # Create a text area for showing logs.
@@ -47,6 +47,10 @@ class ServerGUI:
 
     # Start the GUI
     self.DIALOG.mainloop()
+
+  def destroyGUI(self):
+    self.server.stop(self.log)
+    self.DIALOG.destroy()
 
   def stopServer(self, event=None):
     self.server.stop(self.log)
