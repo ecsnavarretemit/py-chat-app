@@ -6,6 +6,7 @@
 # Licensed under MIT
 
 import Tkinter as pygui
+import chatserver
 
 class ServerGUI:
   DIALOG = pygui.Tk()
@@ -13,6 +14,9 @@ class ServerGUI:
 
   def bootstrap(self, windowTitle="Server GUI"):
     self.setupGUI(windowTitle)
+
+  def setServer(self, server):
+    self.server = server
 
   def setupGUI(self, windowTitle):
     # set window title
@@ -45,7 +49,7 @@ class ServerGUI:
     self.DIALOG.mainloop()
 
   def stopServer(self, event=None):
-    self.log("Stopping Server")
+    self.server.stop(self.log)
 
   def invokeServer(self, event=None):
     portval = self.port_to_use_field.get()
@@ -56,7 +60,9 @@ class ServerGUI:
         # Prevent starting another instance of server
         self.SERVER_ON = True
 
-        self.log("Starting Server on port: " + str(eval(portval)))
+        # log the message
+        self.server.setPort(int(eval(portval)))
+        self.server.invoke(self.log)
       else:
         self.log("Server already started on port: " + str(eval(portval)))
     else:
@@ -66,6 +72,7 @@ class ServerGUI:
     self.activity_log_area.insert(pygui.END, message + "\n")
 
 app = ServerGUI()
+app.setServer(chatserver.ChatServer())
 app.bootstrap('Server GUI')
 
 
