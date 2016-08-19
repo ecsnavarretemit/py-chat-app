@@ -22,29 +22,45 @@ class ServerGUI:
     # set window title
     self.DIALOG.wm_title(windowTitle)
 
-    # Add field for port to use
-    pygui.Label(self.DIALOG, text="Server port to use").grid(row = 0)
+    # [Config Section] :start
+    self.server_config_frame = pygui.Frame(self.DIALOG)
+    self.server_config_frame.pack(side=pygui.TOP, pady=10)
 
-    self.port_to_use_field = pygui.Entry(self.DIALOG)
+    # Add field for port to use
+    pygui.Label(self.server_config_frame, text="Server port to use").grid(row = 0, column=0)
+
+    self.port_to_use_field = pygui.Entry(self.server_config_frame)
     self.port_to_use_field.grid(row=0, column=1)
     self.port_to_use_field.bind("<Return>", self.invokeServer)
+    # [Config Section] :end
+
+    # [Controls Section] ::start
+    self.server_controls_frame = pygui.Frame(self.DIALOG)
+    self.server_controls_frame.pack(side=pygui.RIGHT, fill=pygui.Y)
 
     # Add Start server button
-    self.create_server_btn = pygui.Button(self.DIALOG, text="Start Server", command=self.invokeServer)
-    self.create_server_btn.grid(row=0, column=2)
+    self.create_server_btn = pygui.Button(self.server_controls_frame, text="Start Server", command=self.invokeServer)
+    self.create_server_btn.grid(row=0, column=1)
 
     # Stop Server
-    self.stop_server_btn = pygui.Button(self.DIALOG, text="Stop Server", command=self.stopServer)
-    self.stop_server_btn.grid(row=2, column=2)
+    self.stop_server_btn = pygui.Button(self.server_controls_frame, text="Stop Server", command=self.stopServer)
+    self.stop_server_btn.grid(row=1, column=1)
 
     # Quit Button
-    self.quit_btn = pygui.Button(self.DIALOG, text="Quit", command=self.destroyGUI)
-    self.quit_btn.grid(row=3, column=2)
+    self.quit_btn = pygui.Button(self.server_controls_frame, text="Quit", command=self.destroyGUI)
+    self.quit_btn.grid(row=2, column=1)
+    # [Controls Section] ::end
+
+    # [Logs Section] ::start
+    self.server_logs_frame = pygui.Frame(self.DIALOG)
+    self.server_logs_frame.pack(side=pygui.LEFT, padx=10, pady=10)
 
     # Create a text area for showing logs.
-    pygui.Label(self.DIALOG, text="Logs").grid(row=4)
-    self.activity_log_area = pygui.Text(self.DIALOG, height=10, width=50)
-    self.activity_log_area.grid(row=4, column=1)
+    pygui.Label(self.server_logs_frame, text="Logs", ).grid(row=0)
+    self.activity_log_area = pygui.Text(self.server_logs_frame, height=10, width=50)
+    self.activity_log_area.grid(row=1)
+    self.activity_log_area.config(highlightbackground="black")
+    # [Logs Section] ::end
 
     # Start the GUI
     self.DIALOG.mainloop()
