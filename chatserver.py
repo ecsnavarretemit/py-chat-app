@@ -139,10 +139,18 @@ class ChatServer:
   def stop(self, callback=None):
     # prevent from throwing errors by checking if the server_socket attribute exists.
     if hasattr(self, 'server_socket'):
-      self.server_socket.close()
-
       # stop the thread
       self.stop_thread_evt.set()
+
+      # close all sockets
+      for name, socket in self.SOCKET_DICT.iteritems():
+        socket.close()
+
+      # empty out the socket dictionary
+      self.SOCKET_DICT.clear()
+
+      del self.stop_thread_evt
+      del self.server_socket
 
       if callback != None:
         # invoke a callback supplied
