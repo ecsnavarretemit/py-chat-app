@@ -50,11 +50,17 @@ class ServerGUI:
     self.DIALOG.mainloop()
 
   def destroyGUI(self):
-    self.server.stop(self.log)
+    self.stopServer()
     self.DIALOG.destroy()
 
   def stopServer(self, event=None):
-    self.server.stop(self.log)
+    if self.SERVER_ON == True:
+      self.server.stop(self.log)
+
+      # set the SERVER_ON flag to false to enable create a new server instance
+      self.SERVER_ON = False
+    else:
+      self.log("Server already stopped.")
 
   def invokeServer(self, event=None):
     portval = self.port_to_use_field.get()
