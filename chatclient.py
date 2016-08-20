@@ -13,18 +13,22 @@ class ChatClient:
   SOCKET_LIST = []
   RECV_BUFFER = 4096
 
-  def connect(self, host, port, name, callback=None):
+  def connect(self, host, port, name):
+    is_success = True
+
     self.connection_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     self.connection_socket.settimeout(2)
 
     # connect to remote host
-    try :
+    try:
       self.connection_socket.connect((host, port))
-    except :
-      callback('Unable to connect to ' + host + ' at port' + port)
 
-    # send the fist message as the chat user identifier in the format of `ch_alias:<alias>`
-    self.connection_socket.send('ch_alias:' + name)
+      # send the fist message as the chat user identifier in the format of `ch_alias:<alias>`
+      self.connection_socket.send('ch_alias:' + name)
+    except:
+      is_success = False
+
+    return is_success
 
   def disconnect(self):
     # stop the thread

@@ -106,13 +106,15 @@ class ClientGUI:
       self.connection_name = str(nameval)
 
       # initiate client-server connection
-      self.client.connect(self.connection_host, self.connection_port, self.connection_name)
+      if self.client.connect(self.connection_host, self.connection_port, self.connection_name) == True:
+        # swap UI components/widgets
+        self.switchContext('main')
 
-      # swap UI components/widgets
-      self.switchContext('main')
+        # log any broadcast message
+        self.client.startCommunications(self.log)
+      else:
+        msgBox.showinfo("Client GUI", "Cant connect to server. Please try again later.")
 
-      # log any broadcast message
-      self.client.startCommunications(self.log)
     else:
       msgBox.showinfo("Client GUI", "Please enter the host, and port to connect to as well as your chat name")
 
@@ -127,6 +129,9 @@ class ClientGUI:
 
     # send the message to the other side
     self.client.sendMsg(str(message))
+
+    # delete the message
+    self.message_field.delete('1.0', pygui.END)
 
   def log(self, message):
     self.activity_log_area.insert(pygui.END, message + "\n")
