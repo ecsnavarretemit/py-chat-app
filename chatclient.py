@@ -4,7 +4,6 @@
 # Licensed under MIT
 # Version 1.0
 
-import sys
 import socket
 import select
 import threading
