@@ -23,19 +23,16 @@ class ChatClient:
     except :
       callback('Unable to connect to ' + host + ' at port' + port)
 
-    # add to the list of managed sockets
-    self.SOCKET_LIST.append(self.connection_socket)
-
     # send the fist message as the chat user identifier in the format of `ch_alias:<alias>`
     self.connection_socket.send('ch_alias:' + name)
 
   def disconnect(self):
+    # stop the thread
+    if hasattr(self, 'stop_thread_evt'):
+      self.stop_thread_evt.set()
+
     if hasattr(self, 'connection_socket'):
       self.connection_socket.close()
-
-    # remove the main socket to the list of managed sockets
-    if self.connection_socket in self.SOCKET_LIST:
-      self.SOCKET_LIST.remove(self.connection_socket)
 
   def startCommunications(self, logCallback=None, disconnectionCallback=None):
     self.stop_thread_evt = threading.Event()
@@ -47,19 +44,24 @@ class ChatClient:
 
   def run(self, stop_event, logCallback=None, disconnectionCallback=None):
     while(not stop_event.is_set()):
-      # Get the list sockets which are readable
-      ready_to_read, ready_to_write, in_error = select.select(self.SOCKET_LIST, [], [])
+      SOCKET_LIST = [self.connection_socket]
 
-      for sock in ready_to_read:
-        if sock == self.connection_socket:
-          # incoming message from remote server, s
-          data = sock.recv(self.RECV_BUFFER)
+      try:
+        # Get the list sockets which are readable
+        ready_to_read, ready_to_write, in_error = select.select(SOCKET_LIST, [], [])
 
-          if not data:
-            if disconnectionCallback != None:
-              disconnectionCallback()
-          else:
-            if logCallback != None:
-              logCallback(data)
+        for sock in ready_to_read:
+          if sock == self.connection_socket:
+            # incoming message from remote server, s
+            data = sock.recv(self.RECV_BUFFER)
 
+            if not data:
+              if disconnectionCallback != None:
+                disconnectionCallback()
+            else:
+              if logCallback != None:
+                logCallback(data)
+
+      except:
+        stop_event.set()
 

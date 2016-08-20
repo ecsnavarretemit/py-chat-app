@@ -9,8 +9,9 @@ import Tkinter as pygui
 import tkMessageBox as msgBox
 import chatclient
 
-# TODO: handle disconnection
-# TODO: fix hang on leave chat room
+# TODO: erase on send
+# TODO: scroll on the bottom
+# TODO: scrollbar for the messages
 class ClientGUI:
   DIALOG = pygui.Tk()
 
@@ -85,12 +86,12 @@ class ClientGUI:
       self.mainGUI()
 
     else:
+      # disconnect from the server
+      self.client.disconnect()
+
       # hide the chat room frame/GUI from the window
       if hasattr(self, 'chat_room_frame'):
         self.chat_room_frame.pack_forget()
-
-      # disconnect from the server
-      self.client.disconnect()
 
       self.connectionGUI()
 
