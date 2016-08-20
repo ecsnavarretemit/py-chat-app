@@ -84,12 +84,12 @@ class ChatServer:
                 if callback != None:
                   callback(chat_alias + " on IP address " + peername[0] + " has connected to the server.")
 
-                self.broadcast(self.server_socket, sock, "\r[Server] " + chat_alias + ' on IP address ' + peername[0] + ' has connected in the chat room' + "\n")
+                self.broadcast(self.server_socket, sock, "[Server] " + chat_alias + ' on IP address ' + peername[0] + ' has connected in the chat room')
               else:
                 for name, socket in sock_local_copy.iteritems():
                   # broadcast the message
                   if socket == sock:
-                    self.broadcast(self.server_socket, sock, "\r" + '[' + name + '] ' + data)
+                    self.broadcast(self.server_socket, sock, '[' + name + '] ' + data)
 
             else:
               deep_sock_local_copy = sock_local_copy.copy()
@@ -113,7 +113,7 @@ class ChatServer:
                 if callback != None:
                   callback(item + " on IP address " + peername[0] + " has disconnected from the server.")
 
-                self.broadcast(self.server_socket, socket_to_remove, "\r[Server] " + item + " on IP address " + peername[0] + " has left the chat room.\n")
+                self.broadcast(self.server_socket, socket_to_remove, "[Server] " + item + " on IP address " + peername[0] + " has left the chat room.")
 
               sock_local_copy = deep_sock_local_copy
 
@@ -122,7 +122,7 @@ class ChatServer:
             if callback != None:
               callback(name + " has disconnected from the server.")
 
-            self.broadcast(self.server_socket, sock, "\r%s has gone offline\n" % name)
+            self.broadcast(self.server_socket, sock, "%s has gone offline" % name)
             continue
 
       self.SOCKET_DICT = sock_local_copy
