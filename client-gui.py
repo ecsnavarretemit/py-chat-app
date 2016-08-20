@@ -9,7 +9,7 @@ import Tkinter as pygui
 import tkMessageBox as msgBox
 import chatclient
 
-# TODO: erase on send
+# TODO: detect disconnection
 # TODO: scroll on the bottom
 # TODO: scrollbar for the messages
 class ClientGUI:
@@ -131,7 +131,7 @@ class ClientGUI:
     self.client.sendMsg(str(message))
 
     # delete the message
-    self.message_field.delete('1.0', pygui.END)
+    self.message_field.delete(0, pygui.END)
 
   def log(self, message):
     self.activity_log_area.insert(pygui.END, message + "\n")
