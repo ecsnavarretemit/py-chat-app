@@ -19,6 +19,9 @@ class ClientGUI:
     # set window title
     self.DIALOG.wm_title(windowTitle)
 
+    # handle close button
+    self.DIALOG.protocol("WM_DELETE_WINDOW", self.destroyGUI)
+
     # Start the GUI
     self.DIALOG.mainloop()
 
@@ -76,6 +79,13 @@ class ClientGUI:
     else:
       self.chat_room_frame.pack(side=pygui.TOP, padx=10, pady=10)
     # [Chat Room] ::end
+
+  def destroyGUI(self):
+    # disconnect from the server
+    self.client.disconnect()
+
+    # destroy the window
+    self.DIALOG.destroy()
 
   def switchContext(self, context):
     if context == 'main':
