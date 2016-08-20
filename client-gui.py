@@ -6,11 +6,11 @@
 # Licensed under MIT
 
 import Tkinter as pygui
+from ScrolledText import ScrolledText
 import tkMessageBox as msgBox
 import chatclient
 
 # TODO: scroll on the bottom
-# TODO: scrollbar for the messages
 class ClientGUI:
   DIALOG = pygui.Tk()
 
@@ -58,7 +58,7 @@ class ClientGUI:
       self.chat_room_frame = pygui.Frame(self.DIALOG)
       self.chat_room_frame.pack(side=pygui.TOP, padx=10, pady=10)
 
-      self.activity_log_area = pygui.Text(self.chat_room_frame, height=10, width=50)
+      self.activity_log_area = ScrolledText(self.chat_room_frame, height=10, width=50)
       self.activity_log_area.grid(row=0)
       self.activity_log_area.config(highlightbackground="black")
 
