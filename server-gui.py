@@ -6,6 +6,7 @@
 # Licensed under MIT
 
 import Tkinter as pygui
+from ScrolledText import ScrolledText
 import chatserver
 
 class ServerGUI:
@@ -57,13 +58,20 @@ class ServerGUI:
 
     # Create a text area for showing logs.
     pygui.Label(self.server_logs_frame, text="Logs", ).grid(row=0)
-    self.activity_log_area = pygui.Text(self.server_logs_frame, height=10, width=50)
+    self.activity_log_area = ScrolledText(self.server_logs_frame, height=10, width=50)
+    self.activity_log_area.edit_modified(0)
     self.activity_log_area.grid(row=1)
     self.activity_log_area.config(highlightbackground="black")
+    self.activity_log_area.bind('<<Modified>>', self.scrollToEnd)
     # [Logs Section] ::end
 
     # Start the GUI
     self.DIALOG.mainloop()
+
+  def scrollToEnd(self, event=None):
+    # scroll to the end of text area
+    self.activity_log_area.see(pygui.END)
+    self.activity_log_area.edit_modified(0)
 
   def destroyGUI(self):
     self.stopServer()
