@@ -65,6 +65,9 @@ class ServerGUI:
     self.activity_log_area.bind('<<Modified>>', self.scrollToEnd)
     # [Logs Section] ::end
 
+    # handle close button
+    self.DIALOG.protocol("WM_DELETE_WINDOW", self.destroyGUI)
+
     # Start the GUI
     self.DIALOG.mainloop()
 
