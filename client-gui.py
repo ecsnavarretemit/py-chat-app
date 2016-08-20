@@ -139,14 +139,16 @@ class ClientGUI:
   def sendMsg(self, event=None):
     message = self.message_field.get()
 
-    # show the message on your side
-    self.log('[' + self.connection_name + '] ' + message)
+    # only send messages which are not empty
+    if message:
+      # show the message on your side
+      self.log('[' + self.connection_name + '] ' + message)
 
-    # send the message to the other side
-    self.client.sendMsg(str(message))
+      # send the message to the other side
+      self.client.sendMsg(str(message))
 
-    # delete the message
-    self.message_field.delete(0, pygui.END)
+      # delete the message
+      self.message_field.delete(0, pygui.END)
 
   def log(self, message):
     self.activity_log_area.insert(pygui.END, message + "\n")
