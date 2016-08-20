@@ -9,7 +9,6 @@ import Tkinter as pygui
 import tkMessageBox as msgBox
 import chatclient
 
-# TODO: detect disconnection
 # TODO: scroll on the bottom
 # TODO: scrollbar for the messages
 class ClientGUI:
@@ -110,8 +109,8 @@ class ClientGUI:
         # swap UI components/widgets
         self.switchContext('main')
 
-        # log any broadcast message
-        self.client.startCommunications(self.log)
+        # log any broadcast message and disconnect on lost connection
+        self.client.startCommunications(self.log, lambda: self.switchContext('connection'))
       else:
         msgBox.showinfo("Client GUI", "Cant connect to server. Please try again later.")
 
