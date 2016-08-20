@@ -10,7 +10,6 @@ from ScrolledText import ScrolledText
 import tkMessageBox as msgBox
 import chatclient
 
-# TODO: scroll on the bottom
 class ClientGUI:
   DIALOG = pygui.Tk()
 
@@ -60,7 +59,9 @@ class ClientGUI:
 
       self.activity_log_area = ScrolledText(self.chat_room_frame, height=10, width=50)
       self.activity_log_area.grid(row=0)
+      self.activity_log_area.edit_modified(0)
       self.activity_log_area.config(highlightbackground="black")
+      self.activity_log_area.bind('<<Modified>>', self.scrollToEnd)
 
       self.message_field = pygui.Entry(self.chat_room_frame)
       self.message_field.grid(row=1, column=0)
@@ -93,6 +94,11 @@ class ClientGUI:
         self.chat_room_frame.pack_forget()
 
       self.connectionGUI()
+
+  def scrollToEnd(self, event=None):
+    # scroll to the end of text area
+    self.activity_log_area.see(pygui.END)
+    self.activity_log_area.edit_modified(0)
 
   def connectToServer(self):
     hostval = self.host_to_use_field.get()
