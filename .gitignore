@@ -3,6 +3,10 @@ nbproject
 .vscode
 *.sublime-project
 *.sublime-workspace
+.editorconfig
+
+# python binary files
+*.pyc
 
 # Documentation Files #
 UPGRADE.md
