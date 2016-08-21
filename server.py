@@ -4,7 +4,7 @@
 #
 # Copyright(c) Exequiel Ceasar Navarrete <esnavarrete1@up.edu.ph>
 # Licensed under MIT
-# Version 1.1.0
+# Version 1.1.1
 
 import os
 import sys
