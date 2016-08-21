@@ -31,12 +31,18 @@ class ChatClient:
     return is_success
 
   def disconnect(self):
+    # check if the instance has connection socket
+    # if it has shutdown and close the socket
+    if hasattr(self, 'connection_socket'):
+      try:
+        self.connection_socket.shutdown(socket.SHUT_RDWR)
+        self.connection_socket.close()
+      except:
+        pass
+
     # stop the thread
     if hasattr(self, 'stop_thread_evt'):
       self.stop_thread_evt.set()
-
-    if hasattr(self, 'connection_socket'):
-      self.connection_socket.close()
 
   def startCommunications(self, logCallback=None, disconnectionCallback=None):
     self.stop_thread_evt = threading.Event()
