@@ -13,8 +13,17 @@ sys.path.insert(0, os.path.abspath('./client'))
 from clientgui import ClientGUI
 from chatclient import ChatClient
 
-app = ClientGUI()
-app.setClient(ChatClient())
-app.bootstrap('Client GUI')
+try:
+  app = ClientGUI()
+  app.setClient(ChatClient())
+  app.bootstrap('Client GUI')
+except KeyboardInterrupt:
+  print "\nCleaning Used Resources."
+
+  # destroy GUI along with its used resources
+  app.destroyGUI()
+
+  print "Bye!"
+  sys.exit(0)
 
 
