@@ -75,6 +75,10 @@ class ClientGUI:
       self.exit_chat_btn = pygui.Button(self.chat_room_frame, text="Leave Chat Room", command=lambda: self.switchContext('connection'))
       self.exit_chat_btn.grid(row=2)
     else:
+      # empty the chat logs
+      self.activity_log_area.delete("1.0", pygui.END)
+
+      # show the frame for chat room
       self.chat_room_frame.pack(side=pygui.TOP, padx=10, pady=10)
     # [Chat Room] ::end
 
