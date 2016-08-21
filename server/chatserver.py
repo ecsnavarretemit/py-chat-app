@@ -2,7 +2,7 @@
 #
 # Copyright(c) Exequiel Ceasar Navarrete <esnavarrete1@up.edu.ph>
 # Licensed under MIT
-# Version 1.0.1
+# Version 1.1.0
 
 import socket
 import select
@@ -11,7 +11,6 @@ import re
 
 # TODO: callbacks should be implemented as event listener
 # TODO: handle situation wherein possible duplicate of dictionary keys
-# TODO: add scrollbar to the logs
 class ChatServer:
   PORT = 9000
   HOST = ''
