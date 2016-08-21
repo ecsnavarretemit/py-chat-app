@@ -2,10 +2,11 @@
 #
 # Copyright(c) Exequiel Ceasar Navarrete <esnavarrete1@up.edu.ph>
 # Licensed under MIT
-# Version 1.1.1
+# Version 1.1.2
 
 import Tkinter as pygui
 from ScrolledText import ScrolledText
+import tkMessageBox as msgBox
 
 class ServerGUI:
   DIALOG = pygui.Tk()
@@ -91,16 +92,26 @@ class ServerGUI:
     portval = self.port_to_use_field.get()
 
     if portval != '':
+      # check if the input for port number is a valid integer
+      try:
+        self.server_port = int(portval)
+      except ValueError:
+        msgBox.showinfo("Client GUI", "Invalid Port Number")
+        return
+
       # start the server if not yet started
       if self.SERVER_ON == False:
+        # log the message
+        self.server.setPort(self.server_port)
+
+        if not self.server.invoke(self.log):
+          msgBox.showinfo("Client GUI", "Cannot bind to port: " + str(self.server_port) + ". Please select another port to bind on.")
+          return
+
         # Prevent starting another instance of server
         self.SERVER_ON = True
-
-        # log the message
-        self.server.setPort(int(eval(portval)))
-        self.server.invoke(self.log)
       else:
-        self.log("Server already started on port: " + str(eval(portval)))
+        self.log("Server already started on port: " + str(self.server_port))
     else:
       self.log("Please provide port number for the server to bind on. Thanks!")
 
