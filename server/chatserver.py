@@ -39,7 +39,7 @@ class ChatServer:
     self.stop_thread_evt = threading.Event()
 
     # invoke the run method
-    threading.Thread(target=self.run, args=(self.stop_thread_evt, callback,)).start()
+    threading.Thread(name="py-chat-server-thread", target=self.run, args=(self.stop_thread_evt, callback,)).start()
 
   def run(self, stop_event, callback=None):
     sock_local_copy = self.SOCKET_DICT.copy()
