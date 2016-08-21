@@ -9,7 +9,6 @@
 import Tkinter as pygui
 from ScrolledText import ScrolledText
 import tkMessageBox as msgBox
-import chatclient
 
 class ClientGUI:
   DIALOG = pygui.Tk()
@@ -153,9 +152,5 @@ class ClientGUI:
 
   def log(self, message):
     self.activity_log_area.insert(pygui.END, message + "\n")
-
-app = ClientGUI()
-app.setClient(chatclient.ChatClient())
-app.bootstrap('Client GUI')
 
 

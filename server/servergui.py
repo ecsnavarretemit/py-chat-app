@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-
-# server-gui.py
+# servergui.py
 #
 # Copyright(c) Exequiel Ceasar Navarrete <esnavarrete1@up.edu.ph>
 # Licensed under MIT
@@ -8,7 +6,6 @@
 
 import Tkinter as pygui
 from ScrolledText import ScrolledText
-import chatserver
 
 class ServerGUI:
   DIALOG = pygui.Tk()
@@ -109,9 +106,5 @@ class ServerGUI:
 
   def log(self, message):
     self.activity_log_area.insert(pygui.END, message + "\n")
-
-app = ServerGUI()
-app.setServer(chatserver.ChatServer())
-app.bootstrap('Server GUI')
 
 
