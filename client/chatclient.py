@@ -28,8 +28,6 @@ class ChatClient:
     try:
       self.connection_socket.connect((host, port))
 
-      print rand_uid(10)
-
       # send the first message as the chat user identifier in the format of `ch_alias:<alias>:uid-xxxxxxxxxx`
       self.connection_socket.send('ch_alias:' + name + ':uid-' + rand_uid(10))
     except:
