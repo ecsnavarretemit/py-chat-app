@@ -1,10 +1,8 @@
-#!/usr/bin/env python
-
-# client-gui.py
+# clientgui.py
 #
 # Copyright(c) Exequiel Ceasar Navarrete <esnavarrete1@up.edu.ph>
 # Licensed under MIT
-# Version 1.0.1
+# Version 1.1.0
 
 import Tkinter as pygui
 from ScrolledText import ScrolledText
