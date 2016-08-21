@@ -2,7 +2,7 @@
 #
 # Copyright(c) Exequiel Ceasar Navarrete <esnavarrete1@up.edu.ph>
 # Licensed under MIT
-# Version 1.1.1
+# Version 1.1.2
 
 import socket
 import select
@@ -31,17 +31,23 @@ class ChatClient:
     return is_success
 
   def disconnect(self):
+    # check if the instance has connection socket
+    # if it has shutdown and close the socket
+    if hasattr(self, 'connection_socket'):
+      try:
+        self.connection_socket.shutdown(socket.SHUT_RDWR)
+        self.connection_socket.close()
+      except:
+        pass
+
     # stop the thread
     if hasattr(self, 'stop_thread_evt'):
       self.stop_thread_evt.set()
 
-    if hasattr(self, 'connection_socket'):
-      self.connection_socket.close()
-
   def startCommunications(self, logCallback=None, disconnectionCallback=None):
     self.stop_thread_evt = threading.Event()
 
-    threading.Thread(target=self.run, args=(self.stop_thread_evt, logCallback, disconnectionCallback,)).start()
+    threading.Thread(name="py-chat-client-thread", target=self.run, args=(self.stop_thread_evt, logCallback, disconnectionCallback,)).start()
 
   def sendMsg(self, message):
     self.connection_socket.send(message)

@@ -2,8 +2,9 @@
 #
 # Copyright(c) Exequiel Ceasar Navarrete <esnavarrete1@up.edu.ph>
 # Licensed under MIT
-# Version 1.1.1
+# Version 1.1.2
 
+import re
 import Tkinter as pygui
 from ScrolledText import ScrolledText
 import tkMessageBox as msgBox
@@ -75,6 +76,10 @@ class ClientGUI:
       self.exit_chat_btn = pygui.Button(self.chat_room_frame, text="Leave Chat Room", command=lambda: self.switchContext('connection'))
       self.exit_chat_btn.grid(row=2)
     else:
+      # empty the chat logs
+      self.activity_log_area.delete("1.0", pygui.END)
+
+      # show the frame for chat room
       self.chat_room_frame.pack(side=pygui.TOP, padx=10, pady=10)
     # [Chat Room] ::end
 
@@ -115,8 +120,19 @@ class ClientGUI:
 
     if hostval != '' and portval != '' and nameval != '':
       self.connection_host = str(hostval)
-      self.connection_port = int(eval(portval))
       self.connection_name = str(nameval)
+
+      # check if the host supplied is a valid ip address
+      if not re.match('^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$', self.connection_host):
+        msgBox.showinfo("Client GUI", "Invalid IP Address")
+        return
+
+      # check if the input for port number is a valid integer
+      try:
+        self.connection_port = int(portval)
+      except ValueError:
+        msgBox.showinfo("Client GUI", "Invalid Port Number")
+        return
 
       # initiate client-server connection
       if self.client.connect(self.connection_host, self.connection_port, self.connection_name) == True:
