@@ -4,10 +4,15 @@
 # Licensed under MIT
 # Version 1.1.3
 
+import os
+import sys
+sys.path.insert(0, os.path.abspath('..'))
+
 import socket
 import select
 import threading
 import re
+from helpers import rand_uid
 
 class ChatClient:
   SOCKET_LIST = []
@@ -23,8 +28,10 @@ class ChatClient:
     try:
       self.connection_socket.connect((host, port))
 
+      print rand_uid(10)
+
       # send the first message as the chat user identifier in the format of `ch_alias:<alias>`
-      self.connection_socket.send('ch_alias:' + name)
+      self.connection_socket.send('ch_alias:' + name + ':uid-' + rand_uid(10))
     except:
       is_success = False
 

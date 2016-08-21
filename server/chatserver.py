@@ -4,13 +4,17 @@
 # Licensed under MIT
 # Version 1.1.3
 
+import os
+import sys
+sys.path.insert(0, os.path.abspath('..'))
+
 import socket
 import select
 import threading
 import re
+from helpers import strip_uid
 
 # TODO: callbacks should be implemented as event listener
-# TODO: handle situation wherein possible duplicate of dictionary keys
 class ChatServer:
   PORT = 9000
   HOST = ''
@@ -90,14 +94,14 @@ class ChatServer:
                   peername = sock_local_copy[chat_alias].getpeername()
 
                   if callback != None:
-                    callback(chat_alias + " on IP address " + peername[0] + " has connected to the server.")
+                    callback(strip_uid(chat_alias) + " on IP address " + peername[0] + " has connected to the server.")
 
-                  self.broadcast(self.server_socket, sock, "[Server] " + chat_alias + ' on IP address ' + peername[0] + ' has connected in the chat room')
+                  self.broadcast(self.server_socket, sock, "[Server] " + strip_uid(chat_alias) + ' on IP address ' + peername[0] + ' has connected in the chat room')
                 else:
                   for name, socket in sock_local_copy.iteritems():
                     # broadcast the message
                     if socket == sock:
-                      self.broadcast(self.server_socket, sock, '[' + name + '] ' + data)
+                      self.broadcast(self.server_socket, sock, '[' + strip_uid(name) + '] ' + data)
 
               else:
                 deep_sock_local_copy = sock_local_copy.copy()
@@ -119,18 +123,18 @@ class ChatServer:
                   deep_sock_local_copy.pop(item)
 
                   if callback != None:
-                    callback(item + " on IP address " + peername[0] + " has disconnected from the server.")
+                    callback(strip_uid(item) + " on IP address " + peername[0] + " has disconnected from the server.")
 
-                  self.broadcast(self.server_socket, socket_to_remove, "[Server] " + item + " on IP address " + peername[0] + " has left the chat room.")
+                  self.broadcast(self.server_socket, socket_to_remove, "[Server] " + strip_uid(item) + " on IP address " + peername[0] + " has left the chat room.")
 
                 sock_local_copy = deep_sock_local_copy
 
             # exception
             except:
               if callback != None:
-                callback(name + " has disconnected from the server.")
+                callback(strip_uid(name) + " has disconnected from the server.")
 
-              self.broadcast(self.server_socket, sock, "%s has gone offline" % name)
+              self.broadcast(self.server_socket, sock, "%s has gone offline" % strip_uid(name))
               continue
 
         self.SOCKET_DICT = sock_local_copy

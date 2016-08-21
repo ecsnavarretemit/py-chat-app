@@ -4,10 +4,15 @@
 # Licensed under MIT
 # Version 1.1.3
 
+import os
+import sys
+sys.path.insert(0, os.path.abspath('..'))
+
 import re
 import Tkinter as pygui
 from ScrolledText import ScrolledText
 import tkMessageBox as msgBox
+from helpers import strip_uid
 
 class ClientGUI:
   DIALOG = pygui.Tk()
@@ -156,7 +161,7 @@ class ClientGUI:
     # only send messages which are not empty
     if message:
       # show the message on your side
-      self.log('[' + self.connection_name + '] ' + message)
+      self.log('[' + strip_uid(self.connection_name) + '] ' + message)
 
       # send the message to the other side
       self.client.sendMsg(str(message))
