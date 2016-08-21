@@ -23,7 +23,7 @@ class ChatClient:
     try:
       self.connection_socket.connect((host, port))
 
-      # send the fist message as the chat user identifier in the format of `ch_alias:<alias>`
+      # send the first message as the chat user identifier in the format of `ch_alias:<alias>`
       self.connection_socket.send('ch_alias:' + name)
     except:
       is_success = False
