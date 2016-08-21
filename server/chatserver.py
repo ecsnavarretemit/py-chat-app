@@ -24,22 +24,30 @@ class ChatServer:
     self.HOST = host
 
   def invoke(self, callback=None):
+    is_success = True
+
     self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    self.server_socket.bind((self.HOST, self.PORT))
-    self.server_socket.listen(10)
 
-    # add server socket object to the list of readable connections
-    self.SOCKET_DICT['cs_main_sckt'] = self.server_socket
+    try:
+      self.server_socket.bind((self.HOST, self.PORT))
+      self.server_socket.listen(10)
 
-    if callback != None:
-      # invoke a callback supplied
-      callback("Starting Server on port: " + str(self.PORT))
+      # add server socket object to the list of readable connections
+      self.SOCKET_DICT['cs_main_sckt'] = self.server_socket
 
-    self.stop_thread_evt = threading.Event()
+      if callback != None:
+        # invoke a callback supplied
+        callback("Starting Server on port: " + str(self.PORT))
 
-    # invoke the run method
-    threading.Thread(name="py-chat-server-thread", target=self.run, args=(self.stop_thread_evt, callback,)).start()
+      self.stop_thread_evt = threading.Event()
+
+      # invoke the run method
+      threading.Thread(name="py-chat-server-thread", target=self.run, args=(self.stop_thread_evt, callback,)).start()
+    except:
+      is_success = False
+
+    return is_success
 
   def run(self, stop_event, callback=None):
     sock_local_copy = self.SOCKET_DICT.copy()
@@ -148,7 +156,8 @@ class ChatServer:
     # prevent from throwing errors by checking if the server_socket attribute exists.
     if hasattr(self, 'server_socket'):
       # stop the thread
-      self.stop_thread_evt.set()
+      if hasattr(self, 'stop_thread_evt'):
+        self.stop_thread_evt.set()
 
       # close all sockets
       for name, socket in self.SOCKET_DICT.iteritems():
@@ -157,7 +166,9 @@ class ChatServer:
       # empty out the socket dictionary
       self.SOCKET_DICT.clear()
 
-      del self.stop_thread_evt
+      if hasattr(self, 'stop_thread_evt'):
+        del self.stop_thread_evt
+
       del self.server_socket
 
       if callback != None:
