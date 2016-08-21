@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # client-gui.py
 #
 # Copyright(c) Exequiel Ceasar Navarrete <esnavarrete1@up.edu.ph>
