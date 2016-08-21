@@ -47,7 +47,7 @@ class ChatClient:
   def startCommunications(self, logCallback=None, disconnectionCallback=None):
     self.stop_thread_evt = threading.Event()
 
-    threading.Thread(target=self.run, args=(self.stop_thread_evt, logCallback, disconnectionCallback,)).start()
+    threading.Thread(name="py-chat-client-thread", target=self.run, args=(self.stop_thread_evt, logCallback, disconnectionCallback,)).start()
 
   def sendMsg(self, message):
     self.connection_socket.send(message)
