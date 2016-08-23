@@ -4,24 +4,21 @@
 #
 # Copyright(c) Exequiel Ceasar Navarrete <esnavarrete1@up.edu.ph>
 # Licensed under MIT
-# Version 1.1.2
+# Version 1.1.3
 
-import os
 import sys
-sys.path.insert(0, os.path.abspath('./server'))
-
-from chatserver import ChatServer
-from servergui import ServerGUI
+from chat.server.chatserver import ChatServer
+from chat.server.servergui import ServerGUI
 
 try:
-  app = ServerGUI()
-  app.setServer(ChatServer())
-  app.bootstrap('Server GUI')
+  app = ServerGUI('Server GUI')
+  app.set_server(ChatServer())
+  app.bootstrap()
 except KeyboardInterrupt:
   print "\nCleaning Used Resources."
 
   # destroy GUI along with its used resources
-  app.destroyGUI()
+  app.destroy_gui()
 
   print "Bye!"
   sys.exit(0)
