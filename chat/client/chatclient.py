@@ -39,7 +39,7 @@ class ChatClient(object):
   def disconnect(self):
     # check if the instance has connection socket
     # if it has shutdown and close the socket
-    if hasattr(self, 'connection_socket'):
+    if hasattr(self, 'connection_socket') and self.connection_socket != None:
       try:
         self.connection_socket.shutdown(socket.SHUT_RDWR)
         self.connection_socket.close()
