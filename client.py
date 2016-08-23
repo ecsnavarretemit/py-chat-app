@@ -4,24 +4,21 @@
 #
 # Copyright(c) Exequiel Ceasar Navarrete <esnavarrete1@up.edu.ph>
 # Licensed under MIT
-# Version 1.1.2
+# Version 1.1.3
 
-import os
 import sys
-sys.path.insert(0, os.path.abspath('./client'))
-
-from clientgui import ClientGUI
-from chatclient import ChatClient
+from chat.client.clientgui import ClientGUI
+from chat.client.chatclient import ChatClient
 
 try:
-  app = ClientGUI()
-  app.setClient(ChatClient())
-  app.bootstrap('Client GUI')
+  app = ClientGUI('Client GUI')
+  app.set_client(ChatClient())
+  app.bootstrap()
 except KeyboardInterrupt:
   print "\nCleaning Used Resources."
 
   # destroy GUI along with its used resources
-  app.destroyGUI()
+  app.destroy_gui()
 
   print "Bye!"
   sys.exit(0)

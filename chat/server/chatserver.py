@@ -2,66 +2,81 @@
 #
 # Copyright(c) Exequiel Ceasar Navarrete <esnavarrete1@up.edu.ph>
 # Licensed under MIT
-# Version 1.1.2
+# Version 1.1.3
 
 import socket
 import select
 import threading
 import re
+from chat.helpers.strip_uid import strip_uid
 
 # TODO: callbacks should be implemented as event listener
-# TODO: handle situation wherein possible duplicate of dictionary keys
-class ChatServer:
-  PORT = 9000
-  HOST = ''
-  SOCKET_DICT = {}
-  RECV_BUFFER = 4096
+class ChatServer(object):
+  port = 9000
+  host = ''
+  socket_dict = {}
+  recv_buffer = 4096
 
-  def setPort(self, port):
-    self.PORT = port
+  def __init__(self):
+    # Initialize Blank Socket
+    self.server_socket = None
 
-  def setHost(self, host):
-    self.HOST = host
+    # create thread event for stopping the thread execution
+    self.stop_thread_evt = threading.Event()
+
+  def set_port(self, port):
+    self.port = port
+
+  def set_host(self, host):
+    self.host = host
 
   def invoke(self, callback=None):
     is_success = True
 
-    self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
     try:
-      self.server_socket.bind((self.HOST, self.PORT))
+      self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+      self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+      self.server_socket.bind((self.host, self.port))
       self.server_socket.listen(10)
 
       # add server socket object to the list of readable connections
-      self.SOCKET_DICT['cs_main_sckt'] = self.server_socket
+      self.socket_dict['cs_main_sckt'] = self.server_socket
 
       if callback != None:
         # invoke a callback supplied
-        callback("Starting Server on port: " + str(self.PORT))
+        callback("Starting Server on port: " + str(self.port))
 
-      self.stop_thread_evt = threading.Event()
+      # reset the thread event to blank state
+      if self.stop_thread_evt.is_set() is True:
+        self.stop_thread_evt.clear()
 
       # invoke the run method
       threading.Thread(name="py-chat-server-thread", target=self.run, args=(self.stop_thread_evt, callback,)).start()
-    except:
+    except socket.error:
       is_success = False
 
     return is_success
 
+  # TODO: refactor this function so that it will lessen the indentation level
+  #       of this section. Can be broken into separate functions that can be reused
+  #       in other parts of this application.
   def run(self, stop_event, callback=None):
-    sock_local_copy = self.SOCKET_DICT.copy()
+    sock_local_copy = self.socket_dict.copy()
 
-    while(not stop_event.is_set()):
+    while not stop_event.is_set():
       try:
         # get the list sockets which are ready to be read through select
         # 4th arg, time_out  = 0 : poll and never block
-        ready_to_read, ready_to_write, in_error = select.select(sock_local_copy.values(), [], [], 0)
+        #
+        # (read, write, error) = Sockets
+        # we are only interested in the read socket
+        ready_to_read, _, _ = select.select(sock_local_copy.values(), [], [], 0)
 
         for sock in ready_to_read:
           # a new connection request recieved
           if sock == self.server_socket:
-            sockfd, addr = self.server_socket.accept()
+            # accept returns the socket and the address but we are only interested in the socket
+            sockfd, _ = self.server_socket.accept()
 
             sock_local_copy['tmp'] = sockfd
 
@@ -70,7 +85,7 @@ class ChatServer:
             # process data recieved from client,
             try:
               # receiving data from the socket.
-              data = sock.recv(self.RECV_BUFFER)
+              data = sock.recv(self.recv_buffer)
 
               if data:
                 # there is something in the socket
@@ -90,14 +105,17 @@ class ChatServer:
                   peername = sock_local_copy[chat_alias].getpeername()
 
                   if callback != None:
-                    callback(chat_alias + " on IP address " + peername[0] + " has connected to the server.")
+                    callback(strip_uid(chat_alias) + " on IP address " + peername[0] + " has connected to the server.")
 
-                  self.broadcast(self.server_socket, sock, "[Server] " + chat_alias + ' on IP address ' + peername[0] + ' has connected in the chat room')
+                  self.broadcast(self.server_socket, sock,
+                                 "[Server] %s on IP address %s has connected in the chat room" %
+                                 (strip_uid(chat_alias), peername[0]))
+
                 else:
-                  for name, socket in sock_local_copy.iteritems():
+                  for name, item_socket in sock_local_copy.iteritems():
                     # broadcast the message
-                    if socket == sock:
-                      self.broadcast(self.server_socket, sock, '[' + name + '] ' + data)
+                    if item_socket == sock:
+                      self.broadcast(self.server_socket, sock, '[' + strip_uid(name) + '] ' + data)
 
               else:
                 deep_sock_local_copy = sock_local_copy.copy()
@@ -106,9 +124,9 @@ class ChatServer:
                 # to prevent a runtime exception we store the name of the sockets in a list
                 # then iterate it later for removal. since looping the dictionary and removing items at the same time
                 # throws a RuntimeError
-                for name, socket in deep_sock_local_copy.iteritems():
+                for name, item_socket in deep_sock_local_copy.iteritems():
                   # remove the socket that's broken
-                  if socket == sock:
+                  if item_socket == sock:
                     for_removal.append(name)
 
                 # remove items that are subject for removal
@@ -119,38 +137,40 @@ class ChatServer:
                   deep_sock_local_copy.pop(item)
 
                   if callback != None:
-                    callback(item + " on IP address " + peername[0] + " has disconnected from the server.")
+                    callback(strip_uid(item) + " on IP address " + peername[0] + " has disconnected from the server.")
 
-                  self.broadcast(self.server_socket, socket_to_remove, "[Server] " + item + " on IP address " + peername[0] + " has left the chat room.")
+                  self.broadcast(self.server_socket, socket_to_remove,
+                                 "[Server] %s on IP address %s has left the chat room." %
+                                 (strip_uid(item), peername[0]))
 
                 sock_local_copy = deep_sock_local_copy
 
             # exception
-            except:
+            except socket.error:
               if callback != None:
-                callback(name + " has disconnected from the server.")
+                callback(strip_uid(name) + " has disconnected from the server.")
 
-              self.broadcast(self.server_socket, sock, "%s has gone offline" % name)
+              self.broadcast(self.server_socket, sock, "%s has gone offline" % strip_uid(name))
               continue
 
-        self.SOCKET_DICT = sock_local_copy
+        self.socket_dict = sock_local_copy
 
-      except:
+      except (socket.error, select.error):
         stop_event.set()
 
   def broadcast(self, server_socket, sock, message):
-    for name, socket in self.SOCKET_DICT.iteritems():
+    for name, item_socket in self.socket_dict.iteritems():
       # send the message only to peer
-      if socket != server_socket and socket != sock :
+      if item_socket != server_socket and item_socket != sock:
         try:
-          socket.send(message)
-        except:
+          item_socket.send(message)
+        except socket.error:
           # broken socket connection
-          socket.close()
+          item_socket.close()
 
           # broken socket, remove it
-          if socket in self.SOCKET_DICT:
-            self.SOCKET_DICT.pop(name)
+          if item_socket in self.socket_dict:
+            self.socket_dict.pop(name)
 
   def stop(self, callback=None):
     # prevent from throwing errors by checking if the server_socket attribute exists.
@@ -160,19 +180,16 @@ class ChatServer:
         self.stop_thread_evt.set()
 
       # close all sockets
-      for name, socket in self.SOCKET_DICT.iteritems():
-        socket.close()
+      for itemsocket in self.socket_dict.values():
+        itemsocket.close()
 
       # empty out the socket dictionary
-      self.SOCKET_DICT.clear()
-
-      if hasattr(self, 'stop_thread_evt'):
-        del self.stop_thread_evt
+      self.socket_dict.clear()
 
       del self.server_socket
 
       if callback != None:
         # invoke a callback supplied
-        callback("Stopping server listening on port: " + str(self.PORT))
+        callback("Stopping server listening on port: " + str(self.port))
 
 
