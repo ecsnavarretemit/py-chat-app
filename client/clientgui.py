@@ -20,8 +20,11 @@ class ClientGUI:
   def bootstrap(self, windowTitle="Client GUI"):
     self.connectionGUI()
 
+    # store for later use
+    self.base_window_title = windowTitle
+
     # set window title
-    self.DIALOG.wm_title(windowTitle)
+    self.DIALOG.wm_title(self.base_window_title)
 
     # handle close button
     self.DIALOG.protocol("WM_DELETE_WINDOW", self.destroyGUI)
@@ -103,6 +106,9 @@ class ClientGUI:
 
       self.mainGUI()
 
+      # change the window title to show the connection details
+      self.DIALOG.wm_title(strip_uid(self.connection_name) + ' connected on ' + self.connection_host + ':' + str(self.connection_port) + ' - ' + self.base_window_title)
+
     else:
       # disconnect from the server
       self.client.disconnect()
@@ -112,6 +118,9 @@ class ClientGUI:
         self.chat_room_frame.pack_forget()
 
       self.connectionGUI()
+
+      # set window title
+      self.DIALOG.wm_title(self.base_window_title)
 
   def scrollToEnd(self, event=None):
     # scroll to the end of text area
