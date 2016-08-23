@@ -57,6 +57,9 @@ class ChatServer(object):
 
     return is_success
 
+  # TODO: refactor this function so that it will lessen the indentation level
+  #       of this section. Can be broken into separate functions that can be reused
+  #       in other parts of this application.
   def run(self, stop_event, callback=None):
     sock_local_copy = self.socket_dict.copy()
 
