@@ -1,0 +1,6 @@
+{
+  "name": "py-chat-app",
+  "tagline": "IT 238 Exercise 1 and 2",
+  "body": "### Python Chat Application\r\n\r\nThis application is written in Python with a GUI for the Server and Client. The application utilizes the `Tkinter` library.\r\n\r\n#### System Requirements\r\n\r\n1. Python 2.7.x\r\n2. `Tkinter` Python library",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
